@@ -1,6 +1,6 @@
 #%%
-from reg_checker import reg_finder
-from reg_list import split_reg, evid_reg, year_reg, month_reg
+from PDF_parser.reg_checker import reg_finder
+from PDF_parser.reg_list import split_reg, evid_reg, year_reg, month_reg
 import re 
 
 # 다음과 같은 문장으로 시작하는 경우, 사건 선후와 관계없는 등 정리할 필요 없는 것으로 보임, 3글자로 만들 것

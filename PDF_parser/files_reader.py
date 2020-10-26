@@ -1,10 +1,10 @@
-from file_reader import onefilereader
-from reg_list import split_reg, evid_reg, year_reg
-from sentence_parser import sent_splitter, evidence_detector, date_detector
+from PDF_parser.file_reader import onefilereader
+from PDF_parser.reg_list import split_reg, evid_reg, year_reg
+from PDF_parser.sentence_parser import sent_splitter, evidence_detector, date_detector
 import os 
 import pandas as pd
 
-def files_parser(flist, is_saving_annotated_PDF= False, evid_search= False):
+def files_parser(flist, is_annotating =False, is_saving_annotated_PDF= False, evid_search= False):
     print(flist)
     evid_result = []
     date_result = []
@@ -22,16 +22,19 @@ def files_parser(flist, is_saving_annotated_PDF= False, evid_search= False):
                     if evids: # date가 비지 않았다면, 즉 date가 찾아졌다면
                         print(evids)
                         evid_result.append([list(set(evids)), f, pnum, sent, doc_id])
-                        for anno in annos:
-                            page.addHighlightAnnot(anno)
+                        if is_annotating:
+                            for anno in annos:
+                                page.addHighlightAnnot(anno)
 
                 #For date
                 dates, annos = date_detector(page, sent, year_reg) # 
                 if dates: # date가 비지 않았다면, 즉 date가 찾아졌다면
                     print(dates)
                     date_result.append([list(set(dates)), f, pnum, sent, doc_id])
-                    for anno in annos:
-                        page.addHighlightAnnot(anno)  
+                    if is_annotating:
+                        for anno in annos:
+                            page.addHighlightAnnot(anno)  
+
         print(doc, f)
         if is_saving_annotated_PDF:
             output_fname = f + "_" + str(doc_id).zfill(3) 

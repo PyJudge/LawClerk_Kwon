@@ -1,5 +1,5 @@
 import fitz
-from file_reader import onefilereader
+from PDF_parser.file_reader import onefilereader
 
 def combine_pdf(flist):
     toc = []  

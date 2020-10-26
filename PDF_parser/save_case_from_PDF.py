@@ -3,10 +3,9 @@ import fitz
 import re, os
 import pandas as pd
 import datetime
-from file_reader import get_fname_in_dir
-from files_reader import files_parser, get_girok_evid_list
-from pdf_output import combine_pdf
-
+from PDF_parser.file_reader import get_fname_in_dir
+from PDF_parser.files_reader import files_parser, get_girok_evid_list
+from PDF_parser.pdf_output import combine_pdf
 
 def save_case_from_folder(
     PDF_dir, add_to_existing_case = False, is_saving_evid = False, is_saving_new_PDF = False):
@@ -25,7 +24,7 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF):
     print("\n기록목록", girok_dict, evid_dict)
 
     # TODO files_parser 안에서 gui에 진행 상황 보내야 함
-    evid_data, date_data = files_parser(flist, is_saving_annotated_PDF = is_saving_new_PDF, evid_search = False)
+    evid_data, date_data = files_parser(flist, is_saving_annotated_PDF = False, evid_search = False)
     
     # 목록 파일 처리 함
     #for evid csv 내보내기

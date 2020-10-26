@@ -1,8 +1,8 @@
 import os 
 import fitz
 
-from reg_list import fileevid_reg 
-from reg_checker import sent_f 
+from PDF_parser.reg_list import fileevid_reg 
+from PDF_parser.reg_checker import sent_f 
 
 def get_fname_in_dir(dir):
     """
