@@ -7,8 +7,6 @@ __pycache__/
 *.so
 
 # PDF
-*.pdf
-*.xlsx
 
 # Distribution / packaging
 .Python
