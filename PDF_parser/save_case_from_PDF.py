@@ -6,6 +6,7 @@ import datetime
 from PDF_parser.file_reader import get_fname_in_dir
 from PDF_parser.files_reader import files_parser, get_girok_evid_list
 from PDF_parser.pdf_output import combine_pdf
+from Intellimode.date_trim import delete_duplicate
 
 def save_case_from_folder(
     PDF_dir, add_to_existing_case = False, is_saving_evid = False, is_saving_new_PDF = False):
@@ -17,14 +18,15 @@ def save_case_from_folder(
     save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF)
 
 
-def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF):
+def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, intellimode_date = True):
     
     #pdf 파일 처리함 
     girok_dict, evid_dict = get_girok_evid_list(PDF_dir)
     print("\n기록목록", girok_dict, evid_dict)
 
     # TODO files_parser 안에서 gui에 진행 상황 보내야 함
-    evid_data, date_data = files_parser(flist, is_saving_annotated_PDF = False, evid_search = False)
+    flist = [os.path.join(PDF_dir, fpath) for fpath in flist]
+    evid_data, date_data = files_parser(flist, is_saving_annotated_PDF = False, evid_search = is_saving_evid)
     
     # 목록 파일 처리 함
     #for evid csv 내보내기
@@ -42,7 +44,9 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF):
         for date in r[0]:
             csv_data.append([date, get_girok_author(r[1]), r[1], r[2] + 1, r[3]]) #date, 작성자, 서면, 쪽수, 내용
     csv_data = sorted(csv_data, key = lambda x : (x[0], x[1], x[2], x[3]))
-
+    # TODO : intellimode 추가 pdf
+    if intellimode_date:
+        csv_data = delete_duplicate(csv_data)
     df = pd.DataFrame(csv_data, columns = ['날짜', '작성자/id', '서면', '쪽수', '내용'])
     df.to_excel(os.path.join(PDF_dir, '사실관계 정리표.xlsx'), sheet_name = '날짜 정리', index = False)
 
