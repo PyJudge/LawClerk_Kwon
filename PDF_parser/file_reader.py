@@ -51,7 +51,7 @@ def onefilereader(fname, flist):
             fname.split('_')[1]
             return onefilenameparser(fname), flist.index(fname) + 1   # file 순서를 doc_id로 사용함 
         except:
-            return fname[:-4], flist.index(fname) + 1 # file 순서를 doc_id로 사용함 
+            return fname, flist.index(fname) + 1 # file 순서를 doc_id로 사용함 
     f, doc_id = fname_no_clutter(fname)
     print(f)
     return doc, f, doc_id

@@ -7,6 +7,7 @@ from PDF_parser.file_reader import get_fname_in_dir
 from PDF_parser.files_reader import files_parser, get_girok_evid_list
 from PDF_parser.pdf_output import combine_pdf
 from Intellimode.date_trim import delete_duplicate
+from template.apply_template import apply_template
 
 def save_case_from_folder(
     PDF_dir, add_to_existing_case = False, is_saving_evid = False, is_saving_new_PDF = False):
@@ -50,6 +51,9 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, inte
     df = pd.DataFrame(csv_data, columns = ['날짜', '작성자/id', '서면', '쪽수', '내용'])
     df.to_excel(os.path.join(PDF_dir, '사실관계 정리표.xlsx'), sheet_name = '날짜 정리', index = False)
 
+    # Apply Template
+    apply_template(PDF_dir, '사실관계 정리표.xlsx')
+    
     # TODO: 이미 정리한 pdf.xlsx가 있는지 보고, 있으면 뒤에 추가하며, 없으면 만들어서 추가함 
     today = str(datetime.date.today()).replace('-', '') # 20201005 형태
     flist_df = list(zip(flist, [today for i in range(len(flist))])) 

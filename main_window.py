@@ -1,5 +1,6 @@
 import sys, os, time
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets \
     import (QApplication, QSlider, QLineEdit, QPushButton, \
         QVBoxLayout,QHBoxLayout, QWidget, QMainWindow, QProgressBar, QFileDialog, QLabel, QSpacerItem, QSizePolicy, QCheckBox) 
@@ -77,6 +78,15 @@ class PDF2CaseWindow(QWidget):
         h_box3.addWidget(self.view_case_btn)
         v_box.addLayout(h_box3)
 
+
+        after_label = QLabel("-----실행 이후 다음과 같이 해 주세요-----")
+        after_label.setAlignment(Qt.AlignCenter)
+        v_box.addWidget(after_label)
+        description_label= QLabel()
+        description_label.setPixmap(QPixmap("./img/description.png"))
+        description_label.setAlignment(Qt.AlignCenter)
+        v_box.addWidget(description_label)
+
         self.newcase_btn.clicked.connect(self.make_newcase)
         self.saving_PDF_chk.stateChanged.connect(self.saving_PDF)
         self.saving_evid_chk.stateChanged.connect(self.saving_evid)
@@ -105,7 +115,7 @@ class PDF2CaseWindow(QWidget):
         """
 
         self.setLayout(v_box) 
-        self.setWindowTitle("컴연권 v.0.01")
+        self.setWindowTitle("컴연권 v.0.1")
         self.show()
 
     def make_newcase(self):
@@ -137,10 +147,10 @@ class PDF2CaseWindow(QWidget):
     def view_case(self):
         # for macOS
         if sys.platform == "darwin":
-            os.system('open "{}"'.format(os.path.join(self.path, "사실관계 정리표.xlsx")))
+            os.system('open "{}"'.format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
         #for Windows(I dont know!!!!)
         else:
-            os.system("{}".format(os.path.join(self.path, "사실관계 정리표.xlsx")))
+            os.startfile(r"{}".format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
             
 
 app = QtWidgets.QApplication(sys.argv)
