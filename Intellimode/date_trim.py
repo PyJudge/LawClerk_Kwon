@@ -6,7 +6,7 @@ def delete_duplicate(table):
     for row in table : 
         if row[0] not in date_dict.keys():
             date_dict[row[0]] = []
-        rest_row_ = row[1:5] # 나머지 데이터 
+        rest_row_ = row[1:] # 나머지 데이터 
         date_dict[row[0]].append(rest_row_) # nested list 
 
     result = []

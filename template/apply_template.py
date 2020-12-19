@@ -31,7 +31,7 @@ def apply_template(PDF_dir: str, file: str = "사실관계 정리표.xlsx") -> N
     for i in range(2, int(end_n_row) + 1):
         form_ws[n_cell([2, i])] = '=IF(SUMPRODUCT(1÷COUNTIF($A$2:A{},A{}))=1,A{},"")'.format(i, i, i)
 
-    form.save(os.path.join(PDF_dir, "사실관계 정리표-서식 적용.xlsx"))
+    form.save(os.path.join(PDF_dir, file[:-5] + "-서식 적용.xlsx"))
 
 # %%
 # 11 > A1

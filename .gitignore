@@ -9,12 +9,16 @@ __pycache__/
 # PDF
 *.pdf
 
+# excel 
+*.xlsx 
+*.xls
 # Distribution / packaging
 .Python
 build/
 develop-eggs/
 dist/
 downloads/
+lawclerk_kwon/
 eggs/
 .eggs/
 lib/

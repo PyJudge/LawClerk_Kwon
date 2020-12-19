@@ -1,10 +1,9 @@
 #%%
 from PDF_parser.reg_checker import reg_finder
-from PDF_parser.reg_list import split_reg, evid_reg, year_reg, month_reg
+from PDF_parser.reg_list import split_reg, evid_reg, year_reg, month_reg, useless_token
 import re 
 
 # 다음과 같은 문장으로 시작하는 경우, 사건 선후와 관계없는 등 정리할 필요 없는 것으로 보임, 3글자로 만들 것
-useless_token = ["<제정", "<개정", "<신설" "대법원", "서울고", "서울중", "입증방", "입 증", "소 장", "준비서", "준 비", "답변서", "답 변"]
 
 def sent_splitter(text, split_reg = split_reg):
     splited = re.split(split_reg, text) #결과값에 none도 있으므로 지우고, reg와 같은 결과값이 '다.'하는 식으로 남아 있으므로 이 부분은 합침 
@@ -61,7 +60,9 @@ def date_detector(page, text, year_reg = year_reg, month_reg= month_reg, useless
         date = 0 #yyyymmdd 형태
         if int(yyyy.group()) > 2100 or int(yyyy.group()) < 1870: # 연도가 될 수 없는 것을 제외함
             continue 
-        if text[yyyy.span()[0] - 3 : yyyy.span()[0] - 1] in ['법원', '개정', '제정', '판소'] : # 판결문(헌법재판소), 법령이라면 또 패스  
+        if (text[yyyy.span()[0] - 3 : yyyy.span()[0] - 1] in ['법원', '개정', '제정', '판소' ]) or \
+            (text[yyyy.span()[0] - 2 : yyyy.span()[0] ] in ['법(', '법원',]) :
+             # 판결문(헌법재판소), 법령이라면 또 패스  
             continue
          
         

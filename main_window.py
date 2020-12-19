@@ -115,7 +115,7 @@ class PDF2CaseWindow(QWidget):
         """
 
         self.setLayout(v_box) 
-        self.setWindowTitle("컴연권 v.0.1")
+        self.setWindowTitle("컴연권 v.0.2")
         self.show()
 
     def make_newcase(self):
