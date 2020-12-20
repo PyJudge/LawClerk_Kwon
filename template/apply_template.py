@@ -11,7 +11,7 @@ def n_cell(pos: list()) -> str:
 
 def apply_template(PDF_dir: str, file: str = "사실관계 정리표.xlsx") -> None:
     src = load_workbook(os.path.join(PDF_dir, file))
-    form = load_workbook(os.path.join(os.getcwd(), "template", "temp_template.xlsx"))
+    form = load_workbook(os.path.join(os.getcwd(), "template", "date_template.xlsx"))
     src_ws = src.active
     form_ws = form.active
 

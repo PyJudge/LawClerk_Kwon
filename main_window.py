@@ -35,27 +35,34 @@ class PDF2CaseWindow(QWidget):
         v_box.addWidget(QLabel("""
         시간별 메모를 자동으로 작성하여 주는 프로그램입니다. 
         권원명 판사(helloden@scourt.go.kr)가 작성하였습니다. 
+        사실 인정이나 메모 작성에 조금이나마 도움이 되면 좋겠습니다:) 
 
-        사건의 pdf 파일을 폴더에 담고, (옵션을 선택한 후) 그 폴더를 선택해 주세요.
-        그러면 프로그램이 폴더 내 pdf 파일을 읽어들이고, 그중 날짜를 기재한 문장을 추출하여 시간 순서대로 정리합니다.
-        '사실관계 정리표.xlsx'로 출력됩니다. 시간이 좀 걸릴 수도 있어요!
+        사용법:  
+            사건의 준비서면 등의 pdf 파일을 폴더에 담고, (옵션을 선택한 후) 그 폴더를 선택해 주세요.
+            프로그램이 폴더 내 pdf 파일을 읽어들이고 그중 날짜를 기재한 문장을 추출하여 시간 순서대로 정리합니다.
+
+        결과:
+            1) '사실관계 정리표-서식 적용.xlsx', '사실관계 정리표-요약-서식 적용.xlsx'로 출력됩니다.
+            2) '요약' 파일 한 날짜에 대하여 가장 관련성이 높은 문장 하나만을 적어 둔 것이고, 
+                다른 파일은 그 날짜가 표시된 문장을 모두 정리한 것입니다.
 
         일러두기: 
-            1) 기록 목록을 "목록.xlsx"라는 이름으로 저장하여 두면 더 정확히 찾을 수 있는 경우가 있습니다. 
+            1) 시간이 좀 걸릴 수도 있어요!  
+            2) 기록 목록을 "목록.xlsx"라는 이름으로 저장하여 두면 더 정확히 찾을 수 있는 경우가 있습니다. 
                 (내부용 기록뷰어를 이용하여 여러 개의 pdf로 기록을 받은 경우가 그렇습니다)
-            2) 전문 프로그래머가 아니라서 확언드리기는 어렵습니다만, 
-                제게 메일 등으로 버그 등을 알려 주시면 시간나는 대로 고쳐보겠습니다.
+            3) 저는 보통 소 제기일 이후의 사건은 지워버리고 잘 안 봅니다. 
+            4) 서식은 template 폴더 안에 있습니다(template.xlsx). 이미 저장된 양식을 적절히 수정하여 쓰셔도 됩니다.
         """))
 
         h_box1 = QHBoxLayout()
         self.saving_PDF_chk = QCheckBox()
-        self.saving_PDF_chk.setText("준비서면만 합친 pdf 만들기. 여러 개 pdf(내부용 기록뷰어 이용)로 기록을 받았을 때에만 가능합니다.")
+        self.saving_PDF_chk.setText("준비서면만 합친 pdf 만들기. 내부용 기록뷰어를 이용하여 여러 개 pdf로 기록을 받았을 때에만 가능합니다.")
         h_box1.addWidget(self.saving_PDF_chk)
         v_box.addLayout(h_box1)
 
         h_box2 = QHBoxLayout()
         self.saving_evid_chk = QCheckBox()
-        self.saving_evid_chk.setText("서증 정리 만들기(품질이 아직 좋지 않습니다). 기록 목록(목록.xlsx)이 반드시 필요합니다. 5분 이상 걸릴 수도 있어요.")
+        self.saving_evid_chk.setText("서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다. 5분 이상 걸릴 수도 있고 품질이 완벽하지 않습니다.")
         h_box2.addWidget(self.saving_evid_chk)
         v_box.addLayout(h_box2)
 
@@ -134,7 +141,7 @@ class PDF2CaseWindow(QWidget):
         # make current_case available 
             # self.progress.reset()
             self.current_case = "" # 나중에 current case를 여기다가 지정해주고 
-            self.view_case_btn.setText("사실관계 정리표 열기")
+            self.view_case_btn.setText("완료! 사실관계 정리표(요약) 열기")
             self.view_case_btn.setEnabled(True) # 버튼 활성화(다 하고 나서 해야 할듯 )
         # works well so far 
 
@@ -150,7 +157,7 @@ class PDF2CaseWindow(QWidget):
             os.system('open "{}"'.format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
         #for Windows(I dont know!!!!)
         else:
-            os.startfile(r"{}".format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
+            os.startfile(r"{}".format(os.path.join(self.path, "사실관계 정리표-요약-서식 적용.xlsx")))
             
 
 app = QtWidgets.QApplication(sys.argv)

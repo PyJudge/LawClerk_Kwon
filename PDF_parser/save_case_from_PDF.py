@@ -62,7 +62,8 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, inte
     # Apply Template
     apply_template(PDF_dir, '사실관계 정리표.xlsx')
     apply_template(PDF_dir, '사실관계 정리표-요약.xlsx')
-    
+    os.remove(os.path.join(PDF_dir, "사실관계 정리표.xlsx"))
+    os.remove(os.path.join(PDF_dir,"사실관계 정리표-요약.xlsx"))
     # TODO: 이미 정리한 pdf.xlsx가 있는지 보고, 있으면 뒤에 추가하며, 없으면 만들어서 추가함 
     # today = str(datetime.date.today()).replace('-', '') # 20201005 형태
     # flist_df = list(zip(flist, [today for i in range(len(flist))])) 
