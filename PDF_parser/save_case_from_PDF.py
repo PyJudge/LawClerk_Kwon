@@ -11,15 +11,15 @@ from template.apply_template import apply_template
 from Intellimode.make_abstract import make_abstract, score_date_data
 
 def save_case_from_folder(
-    PDF_dir, add_to_existing_case = False, is_saving_evid = False, is_saving_new_PDF = False):
+    PDF_dir, add_to_existing_case = False, is_saving_evid = False, is_saving_new_PDF = False, is_annotating = False):
     flist = get_fname_in_dir(PDF_dir)
     if add_to_existing_case: 
         # TODO 이미 정리한 파일을 불러, flist의 중복을 없애는 방법으로 프로그래밍
         pass
     # TODO 여기서 파일 개수를 gui에 보내야 함 
-    save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF)
+    save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, is_annotating)
 
-def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, intellimode_date = True):
+def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, is_annotating, intellimode_date = True, is_making_abstract_data= True):
     
     #pdf 파일 처리함 
     girok_dict, evid_dict = get_girok_evid_list(PDF_dir)
@@ -27,7 +27,7 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, inte
 
     # TODO files_parser 안에서 gui에 진행 상황 보내야 함
     flist = [os.path.join(PDF_dir, fpath) for fpath in flist]
-    evid_data, date_data = files_parser(flist, is_saving_annotated_PDF = False, evid_search = is_saving_evid)
+    evid_data, date_data = files_parser(flist, is_annotating = is_annotating, is_saving_annotated_PDF = False, evid_search = is_saving_evid)
     
     # 목록 파일 처리 함
     #for evid csv 내보내기
@@ -47,10 +47,11 @@ def save_case_from_flist(PDF_dir, flist, is_saving_evid, is_saving_new_PDF, inte
             csv_data.append([date, get_girok_author(r[1]), r[1], r[2] + 1, r[3], score]) #date, 작성자, 서면, 쪽수, 내용
     csv_data = sorted(csv_data, key = lambda x : (x[0], x[1], x[2], x[3]))
 
-    abs = make_abstract(csv_data, flist)
-    df = pd.DataFrame(abs, columns = ['날짜', '작성자/id', '서면', '쪽수', '내용', '점수'])
-    df.drop(columns= '점수', inplace=True)
-    df.to_excel(os.path.join(PDF_dir, '사실관계 정리표-요약.xlsx'), sheet_name = '날짜 정리', index = False)
+    if is_making_abstract_data:
+        abs = make_abstract(csv_data, flist)
+        df = pd.DataFrame(abs, columns = ['날짜', '작성자/id', '서면', '쪽수', '내용', '점수'])
+        df.drop(columns= '점수', inplace=True)
+        df.to_excel(os.path.join(PDF_dir, '사실관계 정리표-요약.xlsx'), sheet_name = '날짜 정리', index = False)
 
     # TODO : intellimode 추가 pdf
     if intellimode_date:

@@ -25,6 +25,7 @@ class PDF2CaseWindow(QWidget):
         self.path = ""
         self.is_saving_new_PDF = False
         self.is_saving_evid = False
+        self.is_annotating = False
 
     def init_ui(self):
         """[새로운 사건에 관한 정리 gui]
@@ -66,30 +67,36 @@ class PDF2CaseWindow(QWidget):
         h_box1.addWidget(self.saving_PDF_chk)
         v_box.addLayout(h_box1)
 
+        h_box3 = QHBoxLayout()
+        self.highlight_chk = QCheckBox()
+        self.highlight_chk.setText("날짜 형광펜 칠하기, 위 옵션이 선택된 경우에 그 파일에만 적용됩니다.")
+        h_box3.addWidget(self.highlight_chk)
+        v_box.addLayout(h_box3)
+
         h_box2 = QHBoxLayout()
         self.saving_evid_chk = QCheckBox()
         self.saving_evid_chk.setText("서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다. 5분 이상 걸릴 수도 있고 품질이 완벽하지 않습니다.")
         h_box2.addWidget(self.saving_evid_chk)
         v_box.addLayout(h_box2)
 
-        h_box3 = QHBoxLayout()
+        h_box4 = QHBoxLayout()
         self.newcase_btn = QPushButton("폴더 열기")
         self.description_newcase = QLabel()
-        h_box3.addWidget(self.description_newcase)
-        h_box3.addWidget(self.newcase_btn)
-        v_box.addLayout(h_box3)
+        h_box4.addWidget(self.description_newcase)
+        h_box4.addWidget(self.newcase_btn)
+        v_box.addLayout(h_box4)
         
         # v_box.addWidget(QLabel("[기존 사건]"))
-        h_box3 = QHBoxLayout()
+        h_box5 = QHBoxLayout()
         # Progress bar 
         # h_box3.addWidget(QLabel("진행률"))
         # self.progress = QProgressBar()
         # h_box3.addWidget(self.progress)
-        h_box3.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Preferred, QSizePolicy.Preferred))
+        h_box5.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Preferred, QSizePolicy.Preferred))
         self.view_case_btn = QPushButton ("결과는 여기에서 열 수 있습니다.")
         self.view_case_btn.setEnabled(False)
-        h_box3.addWidget(self.view_case_btn)
-        v_box.addLayout(h_box3)
+        h_box5.addWidget(self.view_case_btn)
+        v_box.addLayout(h_box5)
 
 
         after_label = QLabel("-----실행 이후 다음과 같이 해 주세요-----")
@@ -103,6 +110,7 @@ class PDF2CaseWindow(QWidget):
         self.newcase_btn.clicked.connect(self.make_newcase)
         self.saving_PDF_chk.stateChanged.connect(self.saving_PDF)
         self.saving_evid_chk.stateChanged.connect(self.saving_evid)
+        self.highlight_chk.stateChanged.connect(self.annotating_new_pdf)
         self.view_case_btn.clicked.connect(self.view_case)
         """
         self.oldcase_folder_open = QFileDialog() # 새로 추가할 파일의 폴더
@@ -142,7 +150,7 @@ class PDF2CaseWindow(QWidget):
         if self.path != "": 
         # call real function, 
             save_case_from_folder(
-                self.path, is_saving_evid= self.is_saving_evid, is_saving_new_PDF = self.is_saving_new_PDF)
+                self.path,  is_saving_evid= self.is_saving_evid, is_saving_new_PDF = self.is_saving_new_PDF, is_annotating = self.is_annotating)
 
         # make current_case available 
             # self.progress.reset()
@@ -156,6 +164,12 @@ class PDF2CaseWindow(QWidget):
 
     def saving_evid(self):
         self.is_saving_evid = not self.is_saving_evid
+
+    def annotating_new_pdf(self):
+        if self.is_saving_new_PDF:
+            self.is_annotating = not self.is_annotating
+                        
+
 
     def view_case(self):
         # for macOS

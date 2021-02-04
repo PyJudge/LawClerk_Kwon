@@ -28,8 +28,15 @@ def score_date_data(sent_chunk, flist):
         var = 0
     flag_evid = 1 if reg_finder(sent, evid_reg) != [] else 0 
     occured_in = (flist.index(file_name)+1) * 10000 + page  # 각 서면의 page가 9999 넘지 않는다는 가정... 파일 개수는 9999개 넘지 않고 
-
-    score =  ((101 - num_dates) * 10000000000000000) + (var * 1000000000) + (flag_evid * 100000000) + occured_in
+    
+    complete_sent = 0
+    if sent[-3:] in ['니다.', '다. '] or sent[-2:] in [').', '].', ]:
+        complete_sent = 1 # 완결된 문장의 형태를 우선함
+    score =  ((complete_sent * 100000000000000000) + \
+        (101 - num_dates)    * 10000000000000000) + \
+            (var             * 1000000000) + \
+                (flag_evid   * 100000000) + \
+                    occured_in
     return score
 #%%
 def make_abstract(csv_data, flist):

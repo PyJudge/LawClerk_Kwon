@@ -4,7 +4,7 @@ from PDF_parser.sentence_parser import sent_splitter, evidence_detector, date_de
 import os 
 import pandas as pd
 
-def files_parser(flist, is_annotating =False, is_saving_annotated_PDF= False, evid_search= False):
+def files_parser(flist, is_annotating = False, is_saving_annotated_PDF= False, evid_search= False):
     print(flist)
     evid_result = []
     date_result = []
