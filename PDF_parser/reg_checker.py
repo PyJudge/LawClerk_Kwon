@@ -4,6 +4,7 @@ Created on Sun Apr 12 09:08:33 2020
 
 @author: LatteFairy
 """
+#%%
 class Cursor: 
     def __init__(self, t, pos): #text, position 
         self.t = t
@@ -15,22 +16,26 @@ class Cursor:
     #%% 
 
 def letter_f(to_f: str): # cursor 포지션만 본 다음, to_find와 다르면 '', 아니면 cursor pos 글자와 같은 글자를 아웃풋하는 함수를 만듦
-    assert len(to_f) == 1 # to_f는 한 글자여야 함    
-    def ret_f(c:Cursor) -> str:
+    assert len(to_f) == 1 # to_f는 한 글자여야 함
+
+    def ret_f(c: Cursor) -> str:
         if c.t[c.pos] == to_f:
             return to_f
         else:
             return ''
+    
     return ret_f
 
 def or_f(l: list): # list 중 하나에 해당하면 letter_f 와 같은 동작 수행 
     l1 = [str(i) for i in l]
     rst = list(map(letter_f, l1))    
-    def ret_f(c:Cursor) -> str:  
+    
+    def ret_f(c : Cursor) -> str:  
         for f in rst:
             if f(c):
                 return f(c)
         return ''
+    
     return ret_f
 #%%        
         
@@ -78,7 +83,7 @@ def sent_f(to_f: list):
         반환하는 함수를 반환함 
     """
     length = len(to_f) # 0~ length번까지 postion으로 cursor를 만듦 0~ 9까지에서 5글자 찾으려면 0, 1, 2, 3, 4, 5(9번까지 하면 5글자)]
-    def ret_f(text: str) -> []:
+    def ret_f(text: str) -> list:
         cc = [Cursor(text, i) for i in range(len(text) - length + 1)]
         result = [(chunk_f(to_f)(c), c.pos) for c in cc] # to find를 c에서 찾아라 
         result = [r for r in result if r[0] !=''] # 못 찾은 경우는 지우기
@@ -189,3 +194,7 @@ def ymd_spliter(final, year_reg = yyyy_reg):
             date.append(each_date[0], each_)
     return date             
         
+
+# %%
+
+# %%
