@@ -46,7 +46,7 @@ class PDF2CaseWindow(QWidget):
                     나) 암호를 설정하지 않고
                     다) pdf를 1개의 파일로 병합하지 않은 채 다운로드해 주세요.
                         (준비서면과 증거가 섞여 있어도, 이 경우 증거를 자동으로 무시합니다)
-                그러나 준비서면 등을 한 개의 pdf 파일로 병합한 경우에도 비교적 잘 작동합니다.
+                준비서면 등을 한 개의 pdf 파일로 병합한 경우에도 비교적 잘 작동합니다.
             2) 프로그램이 폴더 내 pdf 파일을 읽어들이고 그중 날짜를 기재한 문장을 추출하여 시간 순서대로 정리합니다.
 
         결과:
@@ -196,12 +196,14 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
-# log를 파일에 출력
-file_handler = logging.FileHandler('my.log')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+# # log를 파일에 출력 이해가 안 되게;;; 안 됨;;; 거의 로그 출력이 안 됨....왜일까-_ㅠㅠㅠㅠ
+# file_handler = logging.FileHandler('email_this.log')
+# file_handler.setFormatter(formatter)
+# file_handler.setLevel(logging.INFO)
+# logger.addHandler(file_handler)
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = PDF2CaseWindow()
+# file_handler.close()
 sys.exit(app.exec_())
 # %%

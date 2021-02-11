@@ -39,7 +39,8 @@ def save_case(setting: Setting):
     # 4. 병합 pdf 파일 생성
     if setting.is_saving_compilation:
         combine_pdf(setting, files) 
-
+    logging.info("Done!!!!!!!!!!!!!!!!!!!!!")
+    
 if __name__ == "__main__":
     save_case(Setting(os.path.join(os.getcwd())))
 
