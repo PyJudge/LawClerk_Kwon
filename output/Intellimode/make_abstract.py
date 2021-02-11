@@ -6,11 +6,14 @@
     기준 4: 다 동일하다면 여러 번 같은 문장 나온 놈이 우월하다. 
 """
 #%%
-import statistics
-from PDF_parser.reg_checker import reg_finder 
-from PDF_parser.reg_list import evid_reg
+import statistics, logging
+from regex.reg_checker import reg_finder 
+from regex.reg_list import evid_reg
+from PDF_parser.file_container import FilesContainer 
 
-def score_date_data(sent_chunk, flist):
+def score_date_data(sent_chunk, files: FilesContainer):
+    flist = files.f_list
+
     dates = sent_chunk[0] # [20200110, 20021120]
     file_name = sent_chunk[1]
     page = sent_chunk[2]
@@ -27,17 +30,16 @@ def score_date_data(sent_chunk, flist):
     else: 
         var = 0
     flag_evid = 1 if reg_finder(sent, evid_reg) != [] else 0 
-    occured_in = (flist.index(file_name)+1) * 10000 + page  # 각 서면의 page가 9999 넘지 않는다는 가정... 파일 개수는 9999개 넘지 않고 
     
     complete_sent = 0
     if sent[-3:] in ['니다.', '다. '] or sent[-2:] in [').', '].', ]:
         complete_sent = 1 # 완결된 문장의 형태를 우선함
-    score =  ((complete_sent * 100000000000000000) + \
-        (101 - num_dates)    * 10000000000000000) + \
-            (var             * 1000000000) + \
-                (flag_evid   * 100000000) + \
-                    occured_in
+    score =  ((complete_sent        * 1000000000) + \
+             (101 - num_dates)      * 100000000) + \
+             (var                   * 10) + \
+             flag_evid
     return score
+
 #%%
 def make_abstract(csv_data, flist):
     abstract_data = []
@@ -45,14 +47,14 @@ def make_abstract(csv_data, flist):
     date_old = csv_data[0][0] # 첫날 
     sentence_best_old = ''
     best_sent_chunk = []
-    print("\n\n\n 요약본 작업 시작함", date_old)
+    logging.info("요약본 작업 시작함--------------", date_old)
 
     for n, sent_chunk in enumerate(csv_data): 
         date_new = sent_chunk[0]
         score_new = sent_chunk[5]
         sentence_new = sent_chunk[4]
         if date_old != date_new: # 날짜가 바뀌면, 기존 데이터를 append 하고, 그 부분 지움
-            print("날짜 바뀜")
+            logging.debug("날짜 바뀜")
             if best_sent_chunk != []:
                 sentence_best_new = best_sent_chunk[4]
                 if sentence_best_old == sentence_best_new:
@@ -68,7 +70,7 @@ def make_abstract(csv_data, flist):
         if score_new > score_max: 
             score_max = score_new  
             best_sent_chunk = sent_chunk
-            print("신기록", print(best_sent_chunk))
+            logging.debug("신기록", logging.debug(best_sent_chunk))
 
         if n == len(csv_data): 
             abstract_data.append(best_sent_chunk) # 마지막 날에는 털고 갑니다. 

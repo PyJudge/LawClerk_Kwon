@@ -1,13 +1,13 @@
-import sys, os, time
+import sys, os, time, logging
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIntValidator
 from PyQt5.QtWidgets \
     import (QApplication, QSlider, QLineEdit, QPushButton, \
-        QVBoxLayout,QHBoxLayout, QWidget, QMainWindow, QProgressBar, QFileDialog, QLabel, QSpacerItem, QSizePolicy, QCheckBox) 
+        QVBoxLayout,QHBoxLayout, QWidget, QMainWindow, QProgressBar, QFileDialog, QLabel, QSpacerItem, QSizePolicy, QCheckBox, QMessageBox) 
 from PyQt5.QtCore import Qt
 
 sys.path.append("./PDF_parser")
-from PDF_parser.save_case_from_PDF import save_case_from_folder
+from save_case import save_case, Setting 
 
 """
 [TODO]
@@ -23,9 +23,10 @@ class PDF2CaseWindow(QWidget):
         self.init_ui() 
         self.current_case = ""
         self.path = ""
-        self.is_saving_new_PDF = False
+        self.is_saving_compilation = False
         self.is_saving_evid = False
         self.is_annotating = False
+        self.date_no_later_than  = 0
 
     def init_ui(self):
         """[새로운 사건에 관한 정리 gui]
@@ -55,10 +56,9 @@ class PDF2CaseWindow(QWidget):
 
         일러두기: 
             1) 시간이 좀 걸릴 수 있어요. 
-                그리고 pdf의 어쩔 수 없는 한계(글씨 깨짐, 문장이 page를 넘어가는 경우 등)가 분명히 있습니다.
+                pdf의 어쩔 수 없는 한계(글씨 깨짐, 문장이 page를 넘어가는 경우, 텍스트를 읽을 수 없는 형식인 경우 등)가 분명히 있습니다.
             2) 기록 목록을 "목록.xlsx"라는 이름으로 저장하여 두면 조금 더 정확히 찾을 수 있긴 합니다. 
             3) 서식은 template 폴더 안에 있습니다(template.xlsx). 이미 저장된 양식을 적절히 수정하여 쓰셔도 됩니다.
-            4) 저는 보통 소 제기일 이후의 사건은 지워버리고 잘 안 봅니다.
         """))
 
         h_box1 = QHBoxLayout()
@@ -69,7 +69,7 @@ class PDF2CaseWindow(QWidget):
 
         h_box3 = QHBoxLayout()
         self.highlight_chk = QCheckBox()
-        self.highlight_chk.setText("날짜 형광펜 칠하기, 위 옵션이 선택된 경우에 그 파일에만 적용됩니다.")
+        self.highlight_chk.setText("각각 날짜에 형광펜 칠한 파일 만들기")
         h_box3.addWidget(self.highlight_chk)
         v_box.addLayout(h_box3)
 
@@ -78,6 +78,14 @@ class PDF2CaseWindow(QWidget):
         self.saving_evid_chk.setText("서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다. 5분 이상 걸릴 수도 있고 품질이 완벽하지 않습니다.")
         h_box2.addWidget(self.saving_evid_chk)
         v_box.addLayout(h_box2)
+
+        h_box6 = QHBoxLayout()
+        self.date_no_later_than_edit = QLineEdit()
+        self.date_no_later_than_edit.setMaxLength(8)
+        self.date_no_later_than_edit.setValidator(QIntValidator())
+        h_box6.addWidget(self.date_no_later_than_edit)
+        h_box6.addWidget(QLabel("yyyyddmm 형태로 넣으면, 그 이후 날짜는 무시합니다(소 제기 날짜 등으로 하면 편해요!)"))
+        v_box.addLayout(h_box6)
 
         h_box4 = QHBoxLayout()
         self.newcase_btn = QPushButton("폴더 열기")
@@ -136,7 +144,7 @@ class PDF2CaseWindow(QWidget):
         """
 
         self.setLayout(v_box) 
-        self.setWindowTitle("컴연권 v.0.21")
+        self.setWindowTitle("컴연권 v.0.3")
         self.show()
 
     def make_newcase(self):
@@ -146,12 +154,13 @@ class PDF2CaseWindow(QWidget):
         if self.path != "": 
             self.view_case_btn.setText("진행 중입니다.")
         # set progress bar 
-
+        date_limit = self.date_no_later_than_edit.text()
         if self.path != "": 
-        # call real function, 
-            save_case_from_folder(
-                self.path,  is_saving_evid= self.is_saving_evid, is_saving_new_PDF = self.is_saving_new_PDF, is_annotating = self.is_annotating)
-
+        # call real function,
+        # TODO: 기존 케이스에 추가 
+            setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
+            save_case(setting)
+#%%
         # make current_case available 
             # self.progress.reset()
             self.current_case = "" # 나중에 current case를 여기다가 지정해주고 
@@ -160,26 +169,39 @@ class PDF2CaseWindow(QWidget):
         # works well so far 
 
     def saving_PDF(self):
-        self.is_saving_new_PDF = not self.is_saving_new_PDF
+        self.is_saving_compilation = not self.is_saving_compilation
 
     def saving_evid(self):
         self.is_saving_evid = not self.is_saving_evid
 
     def annotating_new_pdf(self):
-        if self.is_saving_new_PDF:
-            self.is_annotating = not self.is_annotating
-                        
-
-
+        self.is_annotating = not self.is_annotating
+        # if self.is_saving_compilation:
+        #     self.is_annotating = not self.is_annotating
+        # else:
+        #     msg = QMessageBox()
+        #     msg.setText("날짜 형광펜은 '준비서면만 합친 PDF 만들기'를 선택할 때에만 가능합니다")                        
     def view_case(self):
         # for macOS
         if sys.platform == "darwin":
             os.system('open "{}"'.format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
         #for Windows(I dont know!!!!)
         else:
-            os.startfile(r"{}".format(os.path.join(self.path, "사실관계 정리표-요약-서식 적용.xlsx")))
-            
+            os.startfile(r"{}".format(os.path.join(self.path + "/" + "결과", "사실관계 정리표-요약-서식 적용.xlsx")))
+
+logger = logging.getLogger()            
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+
+# log를 파일에 출력
+file_handler = logging.FileHandler('my.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = PDF2CaseWindow()
 sys.exit(app.exec_())
+# %%

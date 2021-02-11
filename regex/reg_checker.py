@@ -4,6 +4,12 @@ Created on Sun Apr 12 09:08:33 2020
 
 @author: LatteFairy
 """
+
+"""
+    reg_finder(text, reg_list)
+    ymd_spliter(final, year_reg = yyyy_reg)
+    이거 밖에서는 이 두 함수만 쓰면 됨 
+"""
 #%%
 class Cursor: 
     def __init__(self, t, pos): #text, position 
@@ -15,7 +21,7 @@ class Cursor:
             
     #%% 
 
-def letter_f(to_f: str): # cursor 포지션만 본 다음, to_find와 다르면 '', 아니면 cursor pos 글자와 같은 글자를 아웃풋하는 함수를 만듦
+def _char_finder(to_f: str): # cursor 포지션만 본 다음, to_find와 다르면 '', 아니면 cursor pos 글자와 같은 글자를 아웃풋하는 함수를 만듦
     assert len(to_f) == 1 # to_f는 한 글자여야 함
 
     def ret_f(c: Cursor) -> str:
@@ -26,9 +32,9 @@ def letter_f(to_f: str): # cursor 포지션만 본 다음, to_find와 다르면 
     
     return ret_f
 
-def or_f(l: list): # list 중 하나에 해당하면 letter_f 와 같은 동작 수행 
+def _chars_finder(l: list): # list 중 하나에 해당하면 letter_f 와 같은 동작 수행 
     l1 = [str(i) for i in l]
-    rst = list(map(letter_f, l1))    
+    rst = list(map(_char_finder, l1))    
     
     def ret_f(c : Cursor) -> str:  
         for f in rst:
@@ -43,25 +49,25 @@ def or_f(l: list): # list 중 하나에 해당하면 letter_f 와 같은 동작 
     
 #%%
 t = 'cursor 포지션만 본 다음, to_find와 다르면 '', 아니면 cursor pos 글자와 같은 글자를 아웃풋하는 함수를 만듦'
-f = letter_f('u')
+f = _char_finder('u')
 c1 = Cursor(t, 2) # false
 c2 = Cursor(t, 1) # true
 f(c1), f(c2)
 #%%
-f = or_f(['포', 'u'])
+f = _chars_finder(['포', 'u'])
 f(c1), f(c2)
 
 #%%
-def chunk_f(to_f: list): 
+def _chunk_finder(to_f: list): 
     #to_find는 각 글자에 대한 것임, to_f[0]은 0번째에 일치할 문자열 집합, 1자보다 길 때, 문자열을 아웃풋하는 함수(없으면 '') 만듦
     #정확히 동일한 사이즈만 동작함, 커서 위치부터 읽기 시작하여 len만큼 읽음 
     #문자열은 다 일치할 때만 output할 것 
     def ret_f(c:Cursor) -> str:
         cc = [Cursor(c.t, i) for i in range(c.pos, c.pos + len(to_f))] # len만큼 읽고, 
-#        print('cc', [c.t[c.pos] for i,c in enumerate(cc)])
+#        logging.debug('cc', [c.t[c.pos] for i,c in enumerate(cc)])
         ref = [to_f[i] for i in range(len(to_f))]  # 여기에 맞는 찾기 기준을 불러옴 
-        ff = list(map(or_f, ref)) # 함수의 리스트를 만들고 
-#        print('len to_f', len(to_f), len(ff), len(cc))
+        ff = list(map(_chars_finder, ref)) # 함수의 리스트를 만들고 
+#        logging.debug('len to_f', len(to_f), len(ff), len(cc))
         result = [ff[i](cc[i])  for i in range(len(to_f))] # 각 자리에 찾은 결과를 만들어 줌
         output = ''
         for r in result:
@@ -76,7 +82,7 @@ def chunk_f(to_f: list):
     return ret_f
     
 #%% 
-def sent_f(to_f: list):
+def _sent_finder(to_f: list):
     """
     to_f를 받아서 
         text를 주면, Cursor를 만들어서 [(찾은 글자, 위치), (찾은 글자, 위치),....]/ 못찾으면 빈 리스트 
@@ -85,7 +91,7 @@ def sent_f(to_f: list):
     length = len(to_f) # 0~ length번까지 postion으로 cursor를 만듦 0~ 9까지에서 5글자 찾으려면 0, 1, 2, 3, 4, 5(9번까지 하면 5글자)]
     def ret_f(text: str) -> list:
         cc = [Cursor(text, i) for i in range(len(text) - length + 1)]
-        result = [(chunk_f(to_f)(c), c.pos) for c in cc] # to find를 c에서 찾아라 
+        result = [(_chunk_finder(to_f)(c), c.pos) for c in cc] # to find를 c에서 찾아라 
         result = [r for r in result if r[0] !=''] # 못 찾은 경우는 지우기
         return result
     return ret_f
@@ -134,7 +140,7 @@ reg_list = [
 
 #%%
 
-def is_in_span(x, y): #x가 y span 안에 있다
+def _is_in_span(x, y): #x가 y span 안에 있다
     start_x, start_y = x[1], y[1]
     end_x, end_y= (x[1] + len(x[0])), (y[1] + len(y[0]))
     if (start_y <= start_x) and (end_x<= end_y):
@@ -143,14 +149,17 @@ def is_in_span(x, y): #x가 y span 안에 있다
         return False
 
 def reg_finder(text, reg_list):
-    ff = list(map(sent_f, reg_list))
+    """
+        이 파일 밖에서는 이것으로만 쓰면 OK!
+    """
+    ff = list(map(_sent_finder, reg_list))
     result = [f(text) for f in ff if f(text)]
     result = [j for res in result for j in res]
     final = []
     for i in range(len(result)):
         copy = True
         for j in range(len(result)):
-            if i != j and is_in_span(result[i], result[j]):
+            if i != j and _is_in_span(result[i], result[j]):
                 copy = False
         if copy:
             final.append(result[i])

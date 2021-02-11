@@ -1,7 +1,8 @@
 #%%
-from PDF_parser.reg_checker import reg_finder
-from PDF_parser.reg_list import split_reg, evid_reg, year_reg, month_reg, useless_token
-import re 
+from regex.reg_checker import reg_finder
+from regex.reg_list import split_reg, evid_reg, year_reg, month_reg, useless_token
+import re, logging
+from setting import Setting
 
 # 다음과 같은 문장으로 시작하는 경우, 사건 선후와 관계없는 등 정리할 필요 없는 것으로 보임, 3글자로 만들 것
 
@@ -22,18 +23,14 @@ def sent_splitter(text, split_reg = split_reg):
 def formatter(final): # 자료형: final -> 텍스트 그대로, '갑1'꼴 
     y = [str(i) for i in range(10)]
     d_reg = [[y,y,y], [y,y],[y]]
-    print('final,', final)
     result = []
     for f in final:
-        print(f)
         name = f[0]
         gap = f[0][0]
         num = reg_finder(name, d_reg)
         if num :
             num = reg_finder(name, d_reg)[0][0]
-        print(name, num)
         result.append([name, gap+num])
-    print(result)    
     return result
 
 def evidence_detector(page, text, reg_list = evid_reg):
@@ -47,7 +44,7 @@ def evidence_detector(page, text, reg_list = evid_reg):
             anno_list.append(page.searchFor(evid[0]))
     return evid_list, anno_list
 
-def date_detector(page, text, year_reg = year_reg, month_reg= month_reg, useless_token = useless_token):
+def date_detector(setting: Setting, page, text, year_reg = year_reg, month_reg= month_reg, useless_token = useless_token):
     # 시작부터 쓸모 없는 데이터들 지우기
     if text[0:3] in useless_token:
         return [], []
@@ -56,7 +53,6 @@ def date_detector(page, text, year_reg = year_reg, month_reg= month_reg, useless
     date_list = []
     anno_list = []
     for yyyy in dd:
-        print (yyyy)
         date = 0 #yyyymmdd 형태
         if int(yyyy.group()) > 2100 or int(yyyy.group()) < 1870: # 연도가 될 수 없는 것을 제외함
             continue 
@@ -89,9 +85,9 @@ def date_detector(page, text, year_reg = year_reg, month_reg= month_reg, useless
                     date += mm * 100
                     date += int(yyyy.group()) * 10000
                     day = True 
-        if date != 0:
+        if date != 0 and date < setting.date_no_later_than:
             date_list.append(date)
-            print(date)
+            logging.debug(text, "에서 찾은 ", date)
             h_text = text[yyyy.span()[0] : yyyy.span()[1] + 7] 
             anno_list.append(page.searchFor(h_text))
     return date_list, anno_list

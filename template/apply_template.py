@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 import pandas as pd
 from openpyxl.utils.dataframe import dataframe_to_rows
 from itertools import chain
-import os 
+import os, logging
 
 
 def n_cell(pos: list()) -> str:
@@ -20,9 +20,8 @@ def apply_template(PDF_dir: str, file: str = "사실관계 정리표.xlsx") -> N
     for i, row in enumerate(src_ws.iter_cols(min_row = 2)): # omit first row 
         for j, cell in enumerate(row):
             position = [i+2, j+2]         # where to start
-            print(*position, n_cell(position), form_ws[n_cell(position)].value)
-            if n_cell(position)[0] == "A":
-                input()
+            # logging.debug(*position, n_cell(position), form_ws[n_cell(position)].value)
+
             form_ws[n_cell(position)] = cell.value
             end_n_row = n_cell(position)[1:]
 
