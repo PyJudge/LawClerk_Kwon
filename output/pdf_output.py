@@ -8,8 +8,17 @@ def combine_pdf(setting: Setting, files: FilesContainer):
     doc = fitz.open()
 
     combine_path = setting.PDF_dir + '/날짜 형광펜' if setting.is_annotating else setting.PDF_dir
-    combine_flist = os.listdir(combine_path)
-    
+    # skip directories
+    combine_flist = []
+    for fname in os.listdir(combine_path):
+        path = os.path.join(combine_path, fname)
+        if os.path.isdir(path):
+            continue
+        elif fname == "기록 병합.pdf":
+            continue
+        else:
+            combine_flist.append(fname)
+
     logging.info("START COMBINING -------------------")
 
     for to_combine in combine_flist:

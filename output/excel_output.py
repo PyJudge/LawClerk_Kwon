@@ -11,23 +11,28 @@ from template.apply_template import apply_template
 
 
 def excel_output(setting:Setting, files: FilesContainer, girok_dict, evid_dict, evid_data, date_data):
+    logging.info("STARTING OUTPUTTING EXCEL-------------------------------")
+
     PDF_dir = setting.PDF_dir
     flist = files.f_list
 
-    def get_girok_author(dname):
-        try:
-            return girok_dict[ele[1]]
-        except:
-            return str(ele[4]).zfill(3) # authur를 못 찾으면, doc_id를 반환
+    # get_girok_author refactored. 중요한 변화이므로 잘 안 되면 다시 고칠 것 
+    #def get_girok_author(dname):
+    #    try:
+    #        return girok_dict[ele[1]]
+    #    except:
+    #        return str(ele[4]).zfill(3) # authur를 못 찾으면, doc_id를 반환 
 
     # date excel 내보내기 
     csv_data = []
     for ele in date_data:
-        authur = get_girok_author(ele[1])
+        authur = girok_dict[ele[1]] if ele[1] in girok_dict.keys() else str(ele[4]).zfill(3) 
+        logging.info("PROCESSING DOCUMENT", ele[1], "AUTHOR IS", authur) 
         score = score_date_data(ele, files)
         for date in ele[0]:
             csv_data.append([date, authur, ele[1], ele[2] + 1, ele[3], score]) #date, 작성자, 서면, 쪽수, 내용
     csv_data = sorted(csv_data, key = lambda x : (x[0], x[1], x[2], x[3]))
+    logging.info("DATE DATA PROCESSED -----------------------------------------")
 
     if setting.is_making_abstract:
         abs = make_abstract(csv_data, flist)
@@ -37,6 +42,8 @@ def excel_output(setting:Setting, files: FilesContainer, girok_dict, evid_dict, 
 
     if setting.intellimode_date:
         csv_data = delete_duplicate(csv_data)
+
+    logging.info("MAKING FILES AND FINALIZING DATE DATA-----------------------------------------")
     df = pd.DataFrame(csv_data, columns = ['날짜', '작성자/id', '서면', '쪽수', '내용', '점수'])
     df.drop(columns= '점수', inplace=True)
     df.to_excel(os.path.join(PDF_dir, '사실관계 정리표.xlsx'), sheet_name = '날짜 정리', index = False)
@@ -53,6 +60,7 @@ def excel_output(setting:Setting, files: FilesContainer, girok_dict, evid_dict, 
     # flist_df.to_excel(os.path.join(PDF_dir, '이미 정리한 pdf.xlsx'), sheet_name = 'PDF', index= False)
 
     # evid excel 내보내기 
+    logging.info("EVIDENCE DATA-----------------------------------------")
     if setting.is_saving_evid:
         csv_data = []
         for ele in evid_data:

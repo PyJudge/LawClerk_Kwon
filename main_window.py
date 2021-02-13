@@ -88,7 +88,7 @@ class PDF2CaseWindow(QWidget):
         v_box.addLayout(h_box6)
 
         h_box4 = QHBoxLayout()
-        self.newcase_btn = QPushButton("폴더 열기")
+        self.newcase_btn = QPushButton("시작! 폴더를 선택해 주세요.")
         self.description_newcase = QLabel()
         h_box4.addWidget(self.description_newcase)
         h_box4.addWidget(self.newcase_btn)
@@ -158,12 +158,13 @@ class PDF2CaseWindow(QWidget):
         if self.path != "": 
         # call real function,
         # TODO: 기존 케이스에 추가 
-            setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
-            save_case(setting)
+            self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
+            save_case(self.setting)
 #%%
         # make current_case available 
             # self.progress.reset()
             self.current_case = "" # 나중에 current case를 여기다가 지정해주고 
+            msg = QMessageBox()
             self.view_case_btn.setText("완료! 사실관계 정리표(요약) 열기")
             self.view_case_btn.setEnabled(True) # 버튼 활성화(다 하고 나서 해야 할듯 )
         # works well so far 
@@ -184,10 +185,11 @@ class PDF2CaseWindow(QWidget):
     def view_case(self):
         # for macOS
         if sys.platform == "darwin":
-            os.system('open "{}"'.format(os.path.join(self.path, "사실관계 정리표-서식 적용.xlsx")))
+            os.system('open "{}"'.format(os.path.join(self.setting.PDF_dir, "사실관계 정리표-서식 적용.xlsx")))
         #for Windows(I dont know!!!!)
         else:
-            os.startfile(r"{}".format(os.path.join(self.path + "/" + "결과", "사실관계 정리표-요약-서식 적용.xlsx")))
+            os.startfile(r"{}".format(os.path.join(self.setting.PDF_dir, "사실관계 정리표-요약-서식 적용.xlsx")))
+
 
 logger = logging.getLogger()            
 logger.setLevel(logging.INFO)

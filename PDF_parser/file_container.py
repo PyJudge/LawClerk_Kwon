@@ -75,7 +75,7 @@ class FilesContainer:
 
     def long_name_find(self, fname): 
         if fname not in self.f_list:
-            logging.ERROR("잘못된 파일 이름으로 찾음")
+            logging.error("잘못된 파일 이름으로 찾음")
         else:
             doc_id = self.fname_dict[fname] 
             return OneFileContainer(doc_id, self.dir_name, fname)

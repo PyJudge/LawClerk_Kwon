@@ -1,7 +1,10 @@
 #%%
 import pandas as pd
+import logging 
+
 
 def delete_duplicate(table):
+    logging.info("DELETING DUPLICATES -----------------------------------------")
     date_dict = dict()
     for row in table : 
         if row[0] not in date_dict.keys():

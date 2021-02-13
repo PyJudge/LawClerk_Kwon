@@ -1,6 +1,6 @@
 #%%
 from regex.reg_checker import reg_finder
-from regex.reg_list import split_reg, evid_reg, year_reg, month_reg, useless_token
+from regex.reg_list import split_reg, evid_reg, year_reg, month_reg, useless_token, ignore_date_3_chars, ignore_date_2_chars, ignore_date_w_space
 import re, logging
 from setting import Setting
 
@@ -56,8 +56,9 @@ def date_detector(setting: Setting, page, text, year_reg = year_reg, month_reg= 
         date = 0 #yyyymmdd 형태
         if int(yyyy.group()) > 2100 or int(yyyy.group()) < 1870: # 연도가 될 수 없는 것을 제외함
             continue 
-        if (text[yyyy.span()[0] - 3 : yyyy.span()[0] - 1] in ['법원', '개정', '제정', '판소' ]) or \
-            (text[yyyy.span()[0] - 2 : yyyy.span()[0] ] in ['법(', '법원',]) :
+        if  (text[yyyy.span()[0] - 3 : yyyy.span()[0] - 1] in ignore_date_w_space) or \
+            (text[yyyy.span()[0] - 2 : yyyy.span()[0]]     in ignore_date_2_chars) or \
+            (text[yyyy.span()[0] - 3 : yyyy.span()[0]]     in ignore_date_3_chars):
              # 판결문(헌법재판소), 법령이라면 또 패스  
             continue
          
