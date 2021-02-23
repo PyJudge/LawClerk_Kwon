@@ -12,6 +12,7 @@ __pycache__/
 # excel 
 *.xlsx 
 *.xls
+
 # Distribution / packaging
 .Python
 build/
@@ -33,6 +34,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.vs/
+.vs/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

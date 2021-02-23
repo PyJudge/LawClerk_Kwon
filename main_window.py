@@ -144,7 +144,7 @@ class PDF2CaseWindow(QWidget):
         """
 
         self.setLayout(v_box) 
-        self.setWindowTitle("컴연권 v.0.3")
+        self.setWindowTitle("컴연권 v.0.3 Release")
         self.show()
 
     def make_newcase(self):
@@ -175,9 +175,9 @@ class PDF2CaseWindow(QWidget):
                 self.view_case_btn.setText("완료! 사실관계 정리표(요약) 열기")
                 self.view_case_btn.setEnabled(True) # 버튼 활성화(다 하고 나서 해야 할듯 )
             else:
-                self.view_case_btn.setText("유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요")
+                self.view_case_btn.setText("유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요.")
                 msg = QMessageBox()
-                msg.setText('유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요')
+                msg.setText('유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요.')
                 msg.exec_()     
 
         else:
