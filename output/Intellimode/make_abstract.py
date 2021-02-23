@@ -47,7 +47,7 @@ def make_abstract(csv_data, flist):
     date_old = csv_data[0][0] # 첫날 
     sentence_best_old = ''
     best_sent_chunk = []
-    logging.info("요약본 작업 시작함--------------", date_old)
+    logging.info("MAKING ABSTRACTS---------------------")
 
     for n, sent_chunk in enumerate(csv_data): 
         date_new = sent_chunk[0]
@@ -70,7 +70,7 @@ def make_abstract(csv_data, flist):
         if score_new > score_max: 
             score_max = score_new  
             best_sent_chunk = sent_chunk
-            logging.debug("신기록", logging.debug(best_sent_chunk))
+            logging.debug("신기록 {}".format(logging.debug(best_sent_chunk)))
 
         if n == len(csv_data): 
             abstract_data.append(best_sent_chunk) # 마지막 날에는 털고 갑니다. 

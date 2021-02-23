@@ -30,20 +30,21 @@ def save_case(setting: Setting):
     # 2. pdf 파일 처리함 
     # TODO files_parser 안에서 gui에 진행 상황 보내야 함
     girok_dict, evid_dict = get_girok_evid_list(PDF_dir)
-    girok =  "있음" if girok_dict else "없음"
-    evid =  "있음" if evid_dict else "없음"
-    logging.info("\n기록목록 찾았는지 여부 ", girok)
-    logging.info("\n증거목록 찾았는지 여부 ", evid)
+    logging.info("기록목록 {}".format("있음" if girok_dict else "없음"))
+    logging.info("증거목록 {}".format( "있음" if evid_dict else "없음"))
     evid_data, date_data = files_parser(files, setting)
         
     # 3. excel 내보내기
-    excel_output(setting, files, girok_dict, evid_dict, evid_data, date_data)
+    logging.info("date data {}".format("found" if date_data else "not found"))
+    if date_data:
+        excel_output(setting, files, girok_dict, evid_dict, evid_data, date_data)
 
     # 4. 병합 pdf 파일 생성
-    if setting.is_saving_compilation:
-        combine_pdf(setting, files) 
-    logging.info("Done!!!!!!!!!!!!!!!!!!!!!")
+        if setting.is_saving_compilation:
+            combine_pdf(setting, files) 
+    logging.info("DONE!!!!!!!!!!!!!!!!!!!!!")
     
+    return bool(date_data)
 if __name__ == "__main__":
     save_case(Setting(os.path.join(os.getcwd())))
 

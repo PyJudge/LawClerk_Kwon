@@ -23,13 +23,13 @@ def combine_pdf(setting: Setting, files: FilesContainer):
 
     for to_combine in combine_flist:
         short_name = files.long_name_find(to_combine).short_name 
-        logging.debug("in ", short_name)
+        logging.debug("in {}".format( short_name))
         f_name = os.path.join(combine_path, to_combine)
         infile_doc = fitz.open(f_name)
 
         lastPage = len(infile_doc) - 1 
         doc.insertPDF(infile_doc, to_page= lastPage)
-        logging.debug('len doc', len(doc))
+        logging.debug('len doc {}'.format(len(doc)))
         toc.append([1, short_name , page_now])
         page_now += len(infile_doc)
         infile_doc.close()

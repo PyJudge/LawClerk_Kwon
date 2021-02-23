@@ -16,7 +16,7 @@ def files_parser(files: FilesContainer, setting : Setting):
 
         f_name = file.short_name
         doc = file.fitz_doc
-        logging.info("STARTING filesparser\n-------------", file.f_name)
+        logging.info("STARTING file parsing\n------------- {}".format( file.f_name))
         if not file.is_brief: # 증거는 읽지 않음 
             continue
 
@@ -27,7 +27,7 @@ def files_parser(files: FilesContainer, setting : Setting):
 
             for sent in splitted: # page 안에서 문장 마다 찾기 
                 #For evid
-                logging.debug("sent", sent)
+                logging.debug("sent {}".format(sent))
                 if setting.is_saving_evid:
                     evids, annos = evidence_detector(page, sent, evid_reg)
                     if evids: # date가 비지 않았다면, 즉 date가 찾아졌다면

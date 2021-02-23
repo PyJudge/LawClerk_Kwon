@@ -66,13 +66,13 @@ def date_detector(setting: Setting, page, text, year_reg = year_reg, month_reg= 
         month_i = yyyy.span()[1] + 1 # 길면 7글자 더하면 됨 " 10. 30"
         month = text[month_i : month_i + 7]
         month_list = re.split(month_reg, month)
+        day = False
         def isNum(s):
             try:
                 int(s)
                 return True
             except ValueError:
                 return False
-        day = False
         for mm in month_list:
             if not isNum(mm):
                 continue
@@ -88,7 +88,7 @@ def date_detector(setting: Setting, page, text, year_reg = year_reg, month_reg= 
                     day = True 
         if date != 0 and date < setting.date_no_later_than:
             date_list.append(date)
-            logging.debug(text, "에서 찾은 ", date)
+            logging.debug('{} 에서 찾은 {}'.format(date, text))
             h_text = text[yyyy.span()[0] : yyyy.span()[1] + 7] 
             anno_list.append(page.searchFor(h_text))
     return date_list, anno_list

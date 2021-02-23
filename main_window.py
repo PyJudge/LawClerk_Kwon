@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap, QIntValidator
 from PyQt5.QtWidgets \
     import (QApplication, QSlider, QLineEdit, QPushButton, \
-        QVBoxLayout,QHBoxLayout, QWidget, QMainWindow, QProgressBar, QFileDialog, QLabel, QSpacerItem, QSizePolicy, QCheckBox, QMessageBox) 
+        QVBoxLayout,QHBoxLayout, QWidget, QMainWindow, QProgressBar, QFileDialog, QLabel, QErrorMessage, QSpacerItem, QSizePolicy, QCheckBox, QMessageBox) 
 from PyQt5.QtCore import Qt
 
 sys.path.append("./PDF_parser")
@@ -151,24 +151,40 @@ class PDF2CaseWindow(QWidget):
         self.path = QFileDialog.getExistingDirectory(self, "폴더 선택", os.getcwd(), QFileDialog.ShowDirsOnly)
 
         print(self.path)
-        if self.path != "": 
+
+        
+        is_having_PDF = False
+        if self.path:
+            for f_name in os.listdir(self.path):
+                if f_name[-3:] == 'pdf':
+                    is_having_PDF = True
+        
+        if is_having_PDF: 
             self.view_case_btn.setText("진행 중입니다.")
-        # set progress bar 
-        date_limit = self.date_no_later_than_edit.text()
-        if self.path != "": 
-        # call real function,
-        # TODO: 기존 케이스에 추가 
+            # TODO: 기존 케이스에 추가, set progress bar  
+            date_limit = self.date_no_later_than_edit.text()
+            # call real function,
             self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
-            save_case(self.setting)
+            is_date_data_found = save_case(self.setting)
 #%%
         # make current_case available 
             # self.progress.reset()
             self.current_case = "" # 나중에 current case를 여기다가 지정해주고 
-            msg = QMessageBox()
-            self.view_case_btn.setText("완료! 사실관계 정리표(요약) 열기")
-            self.view_case_btn.setEnabled(True) # 버튼 활성화(다 하고 나서 해야 할듯 )
-        # works well so far 
+            QLabel("완료!").show()
+            if is_date_data_found: 
+                self.view_case_btn.setText("완료! 사실관계 정리표(요약) 열기")
+                self.view_case_btn.setEnabled(True) # 버튼 활성화(다 하고 나서 해야 할듯 )
+            else:
+                self.view_case_btn.setText("유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요")
+                msg = QMessageBox()
+                msg.setText('유효한 날짜 정보가 없어 완료하지 못하였습니다. 스캔된 PDF 파일인지 확인해 주세요')
+                msg.exec_()     
 
+        else:
+            msg = QMessageBox()
+            msg.setText('PDF가 있는 폴더를 선택해 주세요.')
+            msg.exec_()     
+        
     def saving_PDF(self):
         self.is_saving_compilation = not self.is_saving_compilation
 

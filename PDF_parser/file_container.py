@@ -1,7 +1,7 @@
 #%%
 import os, logging
 import fitz
-from regex.reg_list import file_evid_reg, file_to_ignore_reg 
+from regex.reg_list import file_evid_reg, file_to_ignore_reg, file_ignoring_reg
 from regex.reg_checker import reg_finder
 #%%
 class OneFileContainer:
@@ -61,10 +61,28 @@ class OneFileContainer:
 class FilesContainer:
     def __init__(self, dir_name):
         self.dir_name = dir_name
-        self.f_list = sorted(
-            [fname for fname in os.listdir(dir_name) \
-                if fname[-3:] == 'pdf' and not reg_finder(fname, file_to_ignore_reg)]) 
+        # self.f_list = sorted(
+        #     [fname for fname in os.listdir(dir_name) \
+        #         if fname[-3:] == 'pdf' and not reg_finder(fname, file_to_ignore_reg)]) 
                 # pdf 파일만 골라서 넣음, file_to_ignore_reg에 있는 것은 생략함  
+
+        #New Code 
+        self.f_list = []
+        for fname in os.listdir(dir_name):
+            if fname[-3:] != 'pdf':
+                continue
+
+            is_to_append = True
+            for ignore in file_ignoring_reg:
+                if ignore in fname:
+                    is_to_append = False
+                    break
+                
+            if is_to_append:
+                self.f_list.append(fname)    
+
+        self.f_list = sorted(self.f_list)                    
+
         self.doc_id_dict= {self.f_list.index(fname) : fname \
                             for fname in self. f_list} # (file sequence as doc id) : (fname)  
         self.fname_dict= {value : key for (key, value) in self.doc_id_dict.items()}
@@ -96,4 +114,6 @@ def test():
 # %
 # %%
 "20누40619_(20.08.31)준비서면_076001.준비서면".split('_')[1]
+# %%
+
 # %%

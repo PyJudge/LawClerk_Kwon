@@ -27,7 +27,7 @@ def excel_output(setting:Setting, files: FilesContainer, girok_dict, evid_dict, 
     csv_data = []
     for ele in date_data:
         authur = girok_dict[ele[1]] if ele[1] in girok_dict.keys() else str(ele[4]).zfill(3) 
-        logging.info("PROCESSING DOCUMENT", ele[1], "AUTHOR IS", authur) 
+        logging.info("PROCESSING DOCUMENT {}, AUTHOR IS {}\n    {}".format(ele[1], authur, ele[3]))
         score = score_date_data(ele, files)
         for date in ele[0]:
             csv_data.append([date, authur, ele[1], ele[2] + 1, ele[3], score]) #date, 작성자, 서면, 쪽수, 내용
