@@ -61,16 +61,16 @@ def excel_output(setting:Setting, files: FilesContainer, girok_dict, evid_dict, 
 
     # evid excel 내보내기 
     logging.info("EVIDENCE DATA-----------------------------------------")
+    def evid_name(ename):
+        try:
+            return evid_dict[ename]
+        except:
+            return ' ' # 증거이름 못 찾으면 빈칸 출력함
     if setting.is_saving_evid:
         csv_data = []
         for ele in evid_data:
             authur = get_girok_author(ele[1])
             for enum in ele[0]:
-                def evid_name(ename):
-                    try:
-                        return evid_dict[ename]
-                    except:
-                        return ' ' # 증거이름 못 찾으면 빈칸 출력함
                 csv_data.append([enum, evid_name(enum), authur, ele[1], ele[2] + 1, ele[3]]) #date, 작성자, 서면, 쪽수, 내용
         csv_data = sorted(csv_data, key = lambda x : (x[0], x[2], x[3], x[4]))
     

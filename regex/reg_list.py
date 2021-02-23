@@ -1,5 +1,6 @@
 """
         - y, d : 0 ~ 9까지의 숫자 
+
         파일 관련
         - file_to_ignore_reg: 무시할 파일 
         - file_evid_reg: 증거로 분류할 파일 
@@ -9,11 +10,11 @@
         - year_reg, month_reg: 준비서면 내용에서 날짜인지 여부 기준 
         - evid_reg: 준비서면 내용에서 증거인지 판단할 근거 
 
-        useless_token: 무시할 문장
+        useless_token: 무시할 문장, 첫 세 글자 입력
         
         r" "형태로 되어 있는 것은 정규표현식으로 넣어야 함. 
         나머지는 [
-                [[('같은 자리에 올 한 글자 리스트')], 
+                [[('같은 자리에 올 한 글자 리스트, 즉')], 
                 ['A', 'B', 'C', 'D'], 
                 [], 
                 []
@@ -29,11 +30,23 @@ d = [str(i) for i in range(10)]
 file_to_ignore_reg =[
         [['위'], ['임']],
         [['참'], ['고'], ['자'], ['료']],
-        [['위'], ['임'], ['장']],
         [['첨'], ['부']],
-        [['보'], ['정'], ['권'], ['고']],
+        [['보'], ['정']],
         [['수'], ['행'], ['자'],],
-        [['집'], ['행'], ['정'],['지']],        
+        [['집'], ['행'], ['정'],['지']],
+        [['금'], ['융']],
+        [['의'], ['견'], ['요'], ['청']],
+        [['문'], ['서'], ['제'], ['출']],
+        [['감'], ['정']],
+        [['변'], ['호'], ['사']],
+        [['기'], ['일']],
+        [['송'], ['부']],
+        [['항'], ['소'], ['인'], ['용']],
+        [['재'], ['개']],
+        [['참'], ['여'], ['관']],
+        [['도'], ['과']],
+        [['증'], ['인']],
+        [['사'], ['실'], ['조'], ['회']]
 ] 
 
 # 증거로 분류할 파일 
@@ -82,6 +95,32 @@ evid_reg = [
 useless_token = ["<제정", "<개정", "<신설" "대법원", "서울고", "서울중", \
         "입증방", "입 증", "소 장", "준비서", "준 비", "답변서", "답 변"]
 
-ignore_date_3_chars = ['법 (', '령 (', '칙 (', '례 ('] # 글자 3개 앞부터, 가령 "법 (1997. 3. 13. 개정)" 이면 1997. 3. 13. 앞에 "법 (" 세 글자니까 무시함
+ignore_date_3_chars = ['법 (', '령 (', '칙 (', '례 (', '규정(', '법 원'] # 글자 3개 앞부터, 가령 "법 (1997. 3. 13. 개정)" 이면 1997. 3. 13. 앞에 "법 (" 세 글자니까 무시함
 ignore_date_2_chars = ['법(', '법원', '령(', '칙(', '례('] # 글자 2개 앞부터,
 ignore_date_w_space = ['법원', '개정', '제정', '판소', ] # 글자 3개 앞부터 2개 앞까지
+
+import os, json
+
+
+class RegLoader:
+	def __init__(self):
+		self.file_to_ignore_reg, \
+			self.file_evid_reg, \
+				self.split_reg, \
+					self.year_reg, \
+						self.month_reg, \
+							self.evid_reg, \
+								self.useless_token, \
+									self.ignore_date_3_chars, \
+										self.ignore_date_2_chars, \
+											self.ignore_date_w_space = \
+			file_loader()
+
+	def file_loader(self, file_destination = None):
+		if file_destination:
+			self.file_destination = file_destination
+		else:
+			self.file_destination = os.getcwd()
+		json.dump()
+        
+		

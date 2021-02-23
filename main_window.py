@@ -75,7 +75,7 @@ class PDF2CaseWindow(QWidget):
 
         h_box2 = QHBoxLayout()
         self.saving_evid_chk = QCheckBox()
-        self.saving_evid_chk.setText("서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다. 5분 이상 걸릴 수도 있고 품질이 완벽하지 않습니다.")
+        self.saving_evid_chk.setText("(실험적 기능) 서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다.")
         h_box2.addWidget(self.saving_evid_chk)
         v_box.addLayout(h_box2)
 

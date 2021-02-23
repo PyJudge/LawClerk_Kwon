@@ -30,9 +30,12 @@ def save_case(setting: Setting):
     # 2. pdf 파일 처리함 
     # TODO files_parser 안에서 gui에 진행 상황 보내야 함
     girok_dict, evid_dict = get_girok_evid_list(PDF_dir)
-    logging.info("\n기록목록", girok_dict, evid_dict)
+    girok =  "있음" if girok_dict else "없음"
+    evid =  "있음" if evid_dict else "없음"
+    logging.info("\n기록목록 찾았는지 여부 ", girok)
+    logging.info("\n증거목록 찾았는지 여부 ", evid)
     evid_data, date_data = files_parser(files, setting)
-    
+        
     # 3. excel 내보내기
     excel_output(setting, files, girok_dict, evid_dict, evid_data, date_data)
 
