@@ -1,13 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\img",
     "\\output",
     "\\output\\Intellimode",
     "\\pdf_for_test",
-    "\\PDF_parser",
-    "\\regex",
-    "\\template"
+    "\\PDF_parser"
   ],
-  "SelectedNode": "\\output\\pdf_output.py",
+  "SelectedNode": "\\setting.py",
   "PreviewInSolutionExplorer": false
 }
