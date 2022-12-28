@@ -43,8 +43,9 @@ def files_parser(files: FilesContainer, setting : Setting):
                     logging.debug(dates)
                     date_result.append([list(set(dates)), f_name, pnum, sent, doc_id])
                     if setting.is_annotating:
-                        for anno in annos:
-                            page.addHighlightAnnot(anno)  
+                        #for anno in annos:
+                        #    page.addHighlightAnnot(anno) / 날짜에 하이라이트하는 기능 안 쓸래ㅠㅠ 
+                        pass
 
         if setting.is_annotating:
             anno_path = file.dir_name + '/날짜 형광펜'

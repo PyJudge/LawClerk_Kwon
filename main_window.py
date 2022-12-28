@@ -23,11 +23,11 @@ class PDF2CaseWindow(QWidget):
         self.init_ui() 
         self.current_case = ""
         self.path = ""
-        self.is_saving_compilation = False
+        self.is_saving_compilation = True
         self.is_saving_evid = False
         self.is_annotating = False
         self.date_no_later_than  = 0
-
+        self.is_making_evidpdf =False
     def init_ui(self):
         """[새로운 사건에 관한 정리 gui]
 
@@ -61,24 +61,31 @@ class PDF2CaseWindow(QWidget):
             3) 서식은 template 폴더 안에 있습니다(template.xlsx). 이미 저장된 양식을 적절히 수정하여 쓰셔도 됩니다.
         """))
 
-        h_box1 = QHBoxLayout()
-        self.saving_PDF_chk = QCheckBox()
-        self.saving_PDF_chk.setText("준비서면만 합친 pdf 만들기. 내부용 기록뷰어를 이용하여 여러 개 pdf로 기록을 받았을 때에만 가능합니다.")
-        h_box1.addWidget(self.saving_PDF_chk)
-        v_box.addLayout(h_box1)
+        #h_box1 = QHBoxLayout()
+        #self.saving_PDF_chk = QCheckBox()
+        #self.saving_PDF_chk.setText("준비서면만 합친 pdf 만들기. 내부용 기록뷰어를 이용하여 여러 개 pdf로 기록을 받았을 때에만 가능합니다.")
+        #h_box1.addWidget(self.saving_PDF_chk)
+        #v_box.addLayout(h_box1)
 
-        h_box3 = QHBoxLayout()
-        self.highlight_chk = QCheckBox()
-        self.highlight_chk.setText("각각 날짜에 형광펜 칠한 파일 만들기")
-        h_box3.addWidget(self.highlight_chk)
-        v_box.addLayout(h_box3)
+
+        #h_box3 = QHBoxLayout()
+        #self.highlight_chk = QCheckBox()
+        #self.highlight_chk.setText("각각 날짜에 형광펜 칠한 파일 만들기")
+        #h_box3.addWidget(self.highlight_chk)
+        #v_box.addLayout(h_box3) # 날짜 형광펜 안 쓸거임
+
+        #h_box7 = QHBoxLayout()
+        #self.saving_evidpdf_chk = QCheckBox()
+        #self.saving_evidpdf_chk.setText("(실험적 기능) 증거만 모은 pdf 만들기")
+        #h_box7.addWidget(self.saving_evidpdf_chk)
+        #v_box.addLayout(h_box7)
 
         h_box2 = QHBoxLayout()
         self.saving_evid_chk = QCheckBox()
         self.saving_evid_chk.setText("(실험적 기능) 서증 정리 만들기. 기록 목록(목록.xlsx)이 반드시 필요합니다.")
         h_box2.addWidget(self.saving_evid_chk)
         v_box.addLayout(h_box2)
-
+       
         h_box6 = QHBoxLayout()
         self.date_no_later_than_edit = QLineEdit()
         self.date_no_later_than_edit.setMaxLength(8)
@@ -116,9 +123,10 @@ class PDF2CaseWindow(QWidget):
         v_box.addWidget(description_label)
 
         self.newcase_btn.clicked.connect(self.make_newcase)
-        self.saving_PDF_chk.stateChanged.connect(self.saving_PDF)
+        #self.saving_PDF_chk.stateChanged.connect(self.saving_PDF)
         self.saving_evid_chk.stateChanged.connect(self.saving_evid)
-        self.highlight_chk.stateChanged.connect(self.annotating_new_pdf)
+        #self.saving_evidpdf_chk.stateChanged.connect(self.saving_evid_pdf)
+        #self.highlight_chk.stateChanged.connect(self.annotating_new_pdf)
         self.view_case_btn.clicked.connect(self.view_case)
         """
         self.oldcase_folder_open = QFileDialog() # 새로 추가할 파일의 폴더
@@ -144,7 +152,7 @@ class PDF2CaseWindow(QWidget):
         """
 
         self.setLayout(v_box) 
-        self.setWindowTitle("컴연권 v.0.3 Release")
+        self.setWindowTitle("컴연권 v.0.3 약식")
         self.show()
 
     def make_newcase(self):
@@ -164,7 +172,8 @@ class PDF2CaseWindow(QWidget):
             # TODO: 기존 케이스에 추가, set progress bar  
             date_limit = self.date_no_later_than_edit.text()
             # call real function,
-            self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
+#            self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
+            self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = True, is_annotating = True, date_no_later_than = date_limit)  # pdf에 하이라이트 사용 안할래, 항상 준비서면 합본도 만들래.
             is_date_data_found = save_case(self.setting)
 #%%
         # make current_case available 
@@ -192,6 +201,9 @@ class PDF2CaseWindow(QWidget):
     def saving_evid(self):
         self.is_saving_evid = not self.is_saving_evid
 
+    def saving_evid_pdf(self):
+        self.is_making_evidpdf = not self.is_making_evidpdf
+        print(self.is_making_evidpdf)
     def annotating_new_pdf(self):
         self.is_annotating = not self.is_annotating
         # if self.is_saving_compilation:

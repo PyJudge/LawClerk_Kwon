@@ -20,7 +20,13 @@ def combine_pdf(setting: Setting, files: FilesContainer):
             combine_flist.append(fname)
 
     logging.info("START COMBINING -------------------")
+    #귀찮아서 코딩 한 거 베끼기 
+    f_list = []
+    for fname in os.listdir(combine_path):
+        if fname[-3:] == 'pdf':
+            f_list.append(fname)    
 
+    combine_flist = sorted(f_list) # TODO 현재 형광펜 기능을 안 할때 준비서면 이외의 서면도 같이 합쳐진다는 문제가 있음 
     for to_combine in combine_flist:
         short_name = files.long_name_find(to_combine).short_name 
         logging.debug("in {}".format( short_name))
