@@ -4,6 +4,10 @@
     기준 2: 날짜 수가 동일하다면, 표준편차가 적은 놈이 우월하다. 
     기준 3: 표준편차가 동일하다면, 증거가 적시된 놈이 우월하다. 
     기준 4: 다 동일하다면 여러 번 같은 문장 나온 놈이 우월하다. 
+
+    /// 기준 폐기: 다시 기준
+    기준 1: 완결된 문장이 우선한다
+    기준 2: 아니면 무조건 빨리 나오는 걸로
 """
 #%%
 import statistics, logging
@@ -25,18 +29,13 @@ def score_date_data(sent_chunk, files: FilesContainer):
     num_dates = len(dates)
     if num_dates > 4:
         return 0 # It is useless if there are too many dates
-    elif num_dates > 1: 
-        var = int(statistics.stdev(dates)/1000)
-    else: 
-        var = 0
     flag_evid = 1 if reg_finder(sent, evid_reg) != [] else 0 
     
     complete_sent = 0
     if sent[-3:] in ['니다.', '다. '] or sent[-2:] in [').', '].', ]:
         complete_sent = 1 # 완결된 문장의 형태를 우선함
-    score =  ((complete_sent        * 1000000000) + \
-             (101 - num_dates)      * 100000000) + \
-             (var                   * 10) + \
+    score =  (complete_sent        * 1000000) + \
+             (- page                 * 10)  + \
              flag_evid
     return score
 
@@ -48,6 +47,17 @@ def make_abstract(csv_data, flist):
     sentence_best_old = ''
     best_sent_chunk = []
     logging.info("MAKING ABSTRACTS---------------------")
+
+    # 같은 날짜가 등장하는 페이지의 목록을 pages로 정리
+    # pages = 날짜: [list]
+    pages = dict()
+    for row in csv_data:
+        #['날짜', '작성자/id', '서면', '쪽수', '내용', '점수']
+        current_date = row[0]
+        if current_date not in pages:
+            pages[current_date] = list().append(row[3]) 
+        else:
+            pages[current_date].append(row[3])
 
     for n, sent_chunk in enumerate(csv_data): 
         date_new = sent_chunk[0]
@@ -75,5 +85,8 @@ def make_abstract(csv_data, flist):
         if n == len(csv_data): 
             abstract_data.append(best_sent_chunk) # 마지막 날에는 털고 갑니다. 
         date_old = date_new
+
+    for  d, page in zip(abstract_data, pages):
+        d[3] = str(page)
 
     return abstract_data
