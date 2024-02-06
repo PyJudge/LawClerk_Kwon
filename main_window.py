@@ -1,3 +1,4 @@
+#%%
 import sys, os, time, logging
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap, QIntValidator
@@ -175,7 +176,6 @@ class PDF2CaseWindow(QWidget):
 #            self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = self.is_saving_compilation, is_annotating = self.is_annotating, date_no_later_than = date_limit) 
             self.setting = Setting(self.path, is_saving_evid= self.is_saving_evid, is_saving_compilation = True, is_annotating = True, date_no_later_than = date_limit)  # pdf에 하이라이트 사용 안할래, 항상 준비서면 합본도 만들래.
             is_date_data_found = save_case(self.setting)
-#%%
         # make current_case available 
             # self.progress.reset()
             self.current_case = "" # 나중에 current case를 여기다가 지정해주고 
@@ -237,4 +237,4 @@ app = QtWidgets.QApplication(sys.argv)
 a_window = PDF2CaseWindow()
 # file_handler.close()
 sys.exit(app.exec_())
-# %%
+
